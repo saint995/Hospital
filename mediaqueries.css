@@ -1,0 +1,198 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+ }
+ body{
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+ }
+ /* NAVIGATION */
+ nav {
+    background-color: #333;
+    padding: 20px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+   
+ }
+ .logo {
+    color: white;
+    font-size: 25px;
+    font-weight: bold;
+ }
+ .links {
+    display: flex;
+    gap: 25px;
+ }
+ .links a {
+    color: white;
+    text-decoration: none;
+    
+ }
+ .links a:hover {
+    color: #ff6347;
+
+ }
+ .hero
+ {
+   text-align: center;
+   padding: 50px 5%;
+ }
+
+
+ .hero h1 {
+    font-size: 45px;
+    margin-bottom: 15px;
+ }
+
+ .hero p {
+    font-size: 18px;
+    margin-bottom: 25px;
+ }
+
+ .hero img
+ {width: 100%;
+  max-width: 900px;
+  height: 500px;
+  border-radius: 15px;
+  object-fit: cover;
+ }
+ .hero {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/images/BG.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: #ffffff; /* keeps text readable */
+  padding: 100px 20px; /* gives the hero section vertical height */
+  text-align: center; 
+  margin-bottom: 50px; /* adds space below the hero section */
+
+ }
+
+ /* FOOD MENU SECTION  */
+ .menu{
+    width: 90%;
+    max-width: 1200px;
+    margin:  auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+ }
+ .FOOD{
+    background-color: white;
+    border-radius: 12px;
+    overflow: hidden;
+    text-align: center;
+    padding-bottom: 20px;
+ }
+ .FOOD img{
+    width: 80%;
+    height: 200px;
+    object-fit: cover;
+ }
+ .FOOD h2{
+
+    margin: 15px 0 8px;
+ }
+ .FOOD p{
+    padding: 0 15px;
+ }
+ .price{
+  display: block;
+    margin-top: 15px;
+    color: #0bec30;
+    font-weight: bold;
+ }
+
+
+ /* CONTACT */
+ .contact{
+    width: 90%;
+    max-width: 800px;
+    margin: 60px auto;
+    background-color: white;
+    padding: 30px;
+    text-align: center;
+    border-radius: 12px;
+
+ }
+ 
+ 
+
+/* TABLET 768px 
+AND ABOVE */
+
+@media (min-width: 768px) {
+    .hero  {
+        padding: 60px 8%;
+    }
+    .hero h1 {
+        font-size: 50px;
+    }
+}
+
+/* PHONE 
+767px AND BELOW  */
+
+@media (max-width: 767px) {
+    nav {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .links {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    .hero {
+        padding: 45px 5%;
+    }
+    .hero h1 {
+        font-size: 32px;
+    }
+    .hero p {
+        font-size: 16px;
+    }
+    .hero img {
+        height: 250px; /* Adjust height for smaller screens */
+    }
+}
+
+/* LARGE DESKTOP
+ 1200px AND ABOVE */
+
+ @media (min-width:1200px) {
+   .hero h1 {
+        font-size: 50px;
+    }
+    .hero p {
+        font-size: 20px;
+    }
+    .hero img {
+        height: 450px; /* Adjust height for larger screens */
+    }
+   
+ }
+
+
+ @media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .links {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+
+    .contact{
+        width: 90%;
+        margin-top: 40px;
+    }
+
+    
+ }

@@ -1,0 +1,771 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artisan-Direct — Export Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,500&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #100D0A;
+    --bg-alt: #17130E;
+    --bg-card: #1C1712;
+    --ink: #F3ECDF;
+    --ink-dim: #B7AC98;
+    --ink-faint: #7A7062;
+    --clay: #C8452B;
+    --clay-glow: rgba(200,69,43,0.35);
+    --jade: #35E2B0;
+    --jade-glow: rgba(53,226,176,0.35);
+    --brass: #CDA43D;
+    --line: rgba(243,236,223,0.10);
+    --line-strong: rgba(243,236,223,0.22);
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Space Grotesk', sans-serif;
+    overflow-x:hidden;
+    line-height:1.5;
+  }
+  ::selection{background:var(--jade); color:#0A0805;}
+
+  a{color:inherit;}
+
+  .display{font-family:'Fraunces', serif;}
+  .mono{font-family:'JetBrains Mono', monospace;}
+
+  /* subtle grain texture */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    pointer-events:none;
+    z-index:2000;
+    opacity:0.035;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode:overlay;
+  }
+
+  .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+
+  :focus-visible{outline:2px solid var(--jade); outline-offset:3px;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important;}
+  }
+
+  /* ===== NAV ===== */
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    backdrop-filter:blur(14px);
+    background:rgba(16,13,10,0.72);
+    border-bottom:1px solid var(--line);
+  }
+  nav{
+    max-width:1180px; margin:0 auto; padding:18px 32px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .logo{
+    font-family:'Fraunces', serif; font-weight:600; font-size:1.15rem;
+    letter-spacing:0.01em;
+    display:flex; align-items:center; gap:10px;
+  }
+  .logo .dot{
+    width:8px; height:8px; border-radius:50%;
+    background:var(--jade);
+    box-shadow:0 0 8px 2px var(--jade-glow);
+  }
+  .navlinks{display:flex; gap:34px; font-size:0.86rem; color:var(--ink-dim);}
+  .navlinks a{text-decoration:none; transition:color 0.2s;}
+  .navlinks a:hover{color:var(--jade);}
+  .nav-cta{
+    font-size:0.82rem; padding:9px 18px; border-radius:2px;
+    border:1px solid var(--line-strong);
+    background:transparent; color:var(--ink); cursor:pointer;
+    font-family:'Space Grotesk'; transition:all 0.25s;
+  }
+  .nav-cta:hover{border-color:var(--jade); color:var(--jade); box-shadow:0 0 16px -4px var(--jade-glow);}
+  .navlinks{display:none;}
+  @media(min-width:860px){.navlinks{display:flex;}}
+
+  /* ===== HERO ===== */
+  .hero{
+    position:relative;
+    min-height:100vh;
+    display:flex; flex-direction:column; justify-content:center;
+    padding-top:110px; padding-bottom:60px;
+    overflow:hidden;
+  }
+  #loomCanvas{
+    position:absolute; inset:0; width:100%; height:100%;
+    opacity:0.85;
+  }
+  .hero-inner{position:relative; z-index:2;}
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace; font-size:0.74rem;
+    color:var(--jade); letter-spacing:0.14em; text-transform:uppercase;
+    display:flex; align-items:center; gap:10px; margin-bottom:22px;
+  }
+  .eyebrow .bar{width:26px; height:1px; background:var(--jade);}
+  h1.hero-title{
+    font-size:clamp(2.6rem, 7vw, 5.4rem);
+    font-weight:500;
+    line-height:0.98;
+    max-width:920px;
+    letter-spacing:-0.01em;
+  }
+  h1.hero-title em{
+    font-style:italic; color:var(--clay);
+    position:relative;
+  }
+  .hero-sub{
+    margin-top:28px; max-width:560px;
+    font-size:1.05rem; color:var(--ink-dim); font-weight:400;
+  }
+  .hero-actions{display:flex; gap:16px; margin-top:42px; flex-wrap:wrap;}
+  .btn-primary{
+    background:var(--jade); color:#0A1512; border:none;
+    padding:15px 30px; font-size:0.92rem; font-weight:600;
+    font-family:'Space Grotesk'; border-radius:2px; cursor:pointer;
+    box-shadow:0 0 0px var(--jade-glow); transition:box-shadow 0.3s, transform 0.2s;
+  }
+  .btn-primary:hover{box-shadow:0 0 30px -2px var(--jade-glow); transform:translateY(-1px);}
+  .btn-ghost{
+    background:transparent; color:var(--ink); border:1px solid var(--line-strong);
+    padding:15px 30px; font-size:0.92rem; font-family:'Space Grotesk'; border-radius:2px; cursor:pointer;
+    transition:border-color 0.25s, color 0.25s;
+  }
+  .btn-ghost:hover{border-color:var(--clay); color:var(--clay);}
+
+  .hero-stats{
+    margin-top:64px; display:grid; grid-template-columns:repeat(3,1fr);
+    max-width:640px; border-top:1px solid var(--line); padding-top:24px;
+  }
+  .hero-stats div{padding-right:20px;}
+  .stat-num{font-family:'JetBrains Mono'; font-size:1.6rem; color:var(--ink); font-weight:500;}
+  .stat-label{font-size:0.74rem; color:var(--ink-faint); margin-top:4px; text-transform:uppercase; letter-spacing:0.06em;}
+
+  /* ===== SECTION SHARED ===== */
+  section{padding:120px 0; position:relative;}
+  .section-head{max-width:660px; margin-bottom:64px;}
+  .kicker{
+    font-family:'JetBrains Mono'; font-size:0.74rem; color:var(--brass);
+    letter-spacing:0.14em; text-transform:uppercase; margin-bottom:16px; display:block;
+  }
+  h2{
+    font-family:'Fraunces', serif; font-weight:500;
+    font-size:clamp(1.9rem, 4vw, 2.9rem); line-height:1.08;
+  }
+  .section-sub{color:var(--ink-dim); margin-top:18px; font-size:1rem; max-width:540px;}
+
+  .reveal{opacity:0; transform:translateY(28px); transition:opacity 0.8s ease, transform 0.8s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+
+  /* ===== PROBLEM: margin bar ===== */
+  .margin-compare{
+    display:grid; grid-template-columns:1fr 1fr; gap:40px;
+    border:1px solid var(--line); border-radius:4px; padding:44px;
+    background:var(--bg-alt);
+  }
+  @media(max-width:760px){.margin-compare{grid-template-columns:1fr;}}
+  .margin-col h3{
+    font-family:'Space Grotesk'; font-size:0.95rem; color:var(--ink-dim);
+    font-weight:500; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:22px;
+  }
+  .bar-track{
+    height:170px; width:56px; background:rgba(255,255,255,0.05);
+    border-radius:2px; position:relative; overflow:hidden; margin-bottom:16px;
+  }
+  .bar-fill{
+    position:absolute; bottom:0; left:0; right:0; width:100%;
+    border-radius:2px 2px 0 0; transition:height 1.4s cubic-bezier(.16,1,.3,1);
+    height:0%;
+  }
+  .bar-fill.clay{background:linear-gradient(180deg, var(--clay), #7a2a1c);}
+  .bar-fill.jade{background:linear-gradient(180deg, var(--jade), #12604a);}
+  .bar-row{display:flex; align-items:flex-end; gap:26px;}
+  .bar-figure{font-family:'JetBrains Mono'; font-size:1.5rem;}
+  .bar-figure-label{font-size:0.8rem; color:var(--ink-faint); margin-top:4px;}
+
+  /* ===== SOLUTION GRID ===== */
+  .feature-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
+    background:var(--line); border:1px solid var(--line); border-radius:4px; overflow:hidden;
+  }
+  @media(max-width:860px){.feature-grid{grid-template-columns:1fr;}}
+  .feature-card{
+    background:var(--bg); padding:38px 32px; transition:background 0.3s;
+    position:relative;
+  }
+  .feature-card:hover{background:var(--bg-card);}
+  .feature-icon{
+    width:38px; height:38px; margin-bottom:22px;
+    display:flex; align-items:center; justify-content:center;
+    border:1px solid var(--line-strong); border-radius:2px; color:var(--jade);
+  }
+  .feature-card h3{font-family:'Space Grotesk'; font-size:1.05rem; font-weight:600; margin-bottom:10px;}
+  .feature-card p{font-size:0.9rem; color:var(--ink-dim);}
+  .feature-tag{
+    position:absolute; top:32px; right:32px; font-family:'JetBrains Mono';
+    font-size:0.7rem; color:var(--ink-faint);
+  }
+
+  /* ===== CRAFT CARDS ===== */
+  .craft-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
+  @media(max-width:860px){.craft-grid{grid-template-columns:1fr;}}
+  .craft-card{
+    border:1px solid var(--line); border-radius:4px; padding:30px;
+    background:var(--bg-alt); cursor:pointer;
+    transition:transform 0.3s, border-color 0.3s;
+    position:relative; overflow:hidden;
+  }
+  .craft-card:hover{transform:translateY(-6px); border-color:var(--line-strong);}
+  .craft-card::after{
+    content:""; position:absolute; inset:0; opacity:0;
+    background:radial-gradient(circle at 30% 20%, var(--accent-glow, var(--jade-glow)), transparent 60%);
+    transition:opacity 0.4s; pointer-events:none;
+  }
+  .craft-card:hover::after{opacity:1;}
+  .craft-num{font-family:'JetBrains Mono'; font-size:0.78rem; color:var(--ink-faint);}
+  .craft-name{font-family:'Fraunces'; font-style:italic; font-size:1.5rem; margin:18px 0 10px;}
+  .craft-desc{font-size:0.88rem; color:var(--ink-dim);}
+  .craft-region{
+    margin-top:20px; font-family:'JetBrains Mono'; font-size:0.72rem;
+    color:var(--brass); text-transform:uppercase; letter-spacing:0.05em;
+  }
+
+  /* ===== CALCULATOR ===== */
+  .calc{
+    display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center;
+    border:1px solid var(--line); border-radius:4px; padding:52px;
+    background:var(--bg-alt);
+  }
+  @media(max-width:860px){.calc{grid-template-columns:1fr; gap:40px;}}
+  .calc-label{font-family:'JetBrains Mono'; font-size:0.78rem; color:var(--ink-faint); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:12px;}
+  .calc-price{font-family:'JetBrains Mono'; font-size:2rem; color:var(--ink); margin-bottom:28px;}
+  input[type=range]{
+    -webkit-appearance:none; width:100%; height:2px; background:var(--line-strong); border-radius:2px; margin-bottom:10px;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; width:16px; height:16px; border-radius:50%;
+    background:var(--jade); cursor:pointer; box-shadow:0 0 12px var(--jade-glow);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:16px; height:16px; border-radius:50%; background:var(--jade); border:none; cursor:pointer;
+  }
+  .slider-caption{display:flex; justify-content:space-between; font-size:0.78rem; color:var(--ink-faint); font-family:'JetBrains Mono';}
+  .calc-result{
+    display:flex; flex-direction:column; gap:22px;
+  }
+  .result-row{display:flex; justify-content:space-between; align-items:baseline; border-bottom:1px solid var(--line); padding-bottom:14px;}
+  .result-row .k{color:var(--ink-dim); font-size:0.88rem;}
+  .result-row .v{font-family:'JetBrains Mono'; font-size:1.3rem;}
+  .result-row.hi .v{color:var(--jade);}
+  .calc-note{font-size:0.8rem; color:var(--ink-faint); margin-top:6px; line-height:1.5;}
+  .model-toggle{display:flex; gap:10px; margin-bottom:26px;}
+  .toggle-btn{
+    flex:1; padding:11px; text-align:center; font-size:0.82rem;
+    border:1px solid var(--line-strong); background:transparent; color:var(--ink-dim);
+    cursor:pointer; border-radius:2px; font-family:'Space Grotesk'; transition:all 0.25s;
+  }
+  .toggle-btn.active{border-color:var(--jade); color:var(--jade); box-shadow:0 0 14px -4px var(--jade-glow);}
+
+  /* ===== LOGISTICS ROW ===== */
+  .logi-strip{
+    display:flex; align-items:center; justify-content:space-between;
+    border:1px solid var(--line); border-radius:4px; padding:30px 40px;
+    flex-wrap:wrap; gap:20px;
+  }
+  .logi-item{display:flex; align-items:center; gap:12px; font-family:'JetBrains Mono'; font-size:0.85rem; color:var(--ink-dim);}
+  .logi-dot{width:6px; height:6px; border-radius:50%; background:var(--brass);}
+
+  /* ===== CTA ===== */
+  .cta-section{
+    text-align:center; padding:140px 0;
+    background:radial-gradient(ellipse at center, var(--bg-card) 0%, var(--bg) 70%);
+  }
+  .cta-section h2{max-width:620px; margin:0 auto 30px;}
+  .cta-buttons{display:flex; gap:18px; justify-content:center; flex-wrap:wrap; margin-top:16px;}
+
+  .apply-form{
+    max-width:760px; margin:64px auto 0; text-align:left;
+    border:1px solid var(--line); border-radius:4px; padding:44px;
+    background:var(--bg-alt);
+  }
+  .form-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:26px; margin-bottom:32px;
+  }
+  @media(max-width:640px){.form-grid{grid-template-columns:1fr;}}
+  .form-field-wide{grid-column:1 / -1;}
+  .form-field{display:flex; flex-direction:column; gap:8px;}
+  .form-field label{
+    font-family:'JetBrains Mono'; font-size:0.74rem; color:var(--ink-dim);
+    text-transform:uppercase; letter-spacing:0.05em;
+  }
+  .form-field label .opt{color:var(--ink-faint); text-transform:none; letter-spacing:0;}
+  .form-field input, .form-field select, .form-field textarea{
+    background:var(--bg); border:1px solid var(--line-strong); border-radius:2px;
+    color:var(--ink); padding:12px 14px; font-family:'Space Grotesk'; font-size:0.92rem;
+    transition:border-color 0.2s, box-shadow 0.2s;
+  }
+  .form-field input:focus, .form-field select:focus, .form-field textarea:focus{
+    border-color:var(--jade); box-shadow:0 0 0 3px rgba(53,226,176,0.12); outline:none;
+  }
+  .form-field textarea{resize:vertical; font-family:'Space Grotesk';}
+  .form-field.invalid input, .form-field.invalid select, .form-field.invalid textarea{
+    border-color:var(--clay);
+  }
+  .field-error{
+    display:none; font-size:0.76rem; color:var(--clay); font-family:'JetBrains Mono';
+  }
+  .form-field.invalid .field-error{display:block;}
+  .form-status{
+    margin-top:18px; font-family:'JetBrains Mono'; font-size:0.86rem; min-height:1.2em;
+  }
+  .form-status.success{color:var(--jade);}
+  .form-status.error{color:var(--clay);}
+
+  footer{
+    border-top:1px solid var(--line); padding:44px 0;
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:20px;
+    font-size:0.82rem; color:var(--ink-faint);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <div class="logo"><span class="dot"></span>Artisan&#8209;Direct</div>
+    <div class="navlinks">
+      <a href="#problem">The Gap</a>
+      <a href="#solution">Platform</a>
+      <a href="#crafts">Crafts</a>
+      <a href="#calculator">Margins</a>
+      <a href="#join">Join</a>
+    </div>
+    <button class="nav-cta">Sign in</button>
+  </nav>
+</header>
+
+<section class="hero">
+  <canvas id="loomCanvas"></canvas>
+  <div class="wrap hero-inner">
+    <div class="eyebrow"><span class="bar"></span>Nairobi &middot; built for the Jua Kali</div>
+    <h1 class="hero-title">The workshop<br>connects straight<br>to the <em>world.</em></h1>
+    <p class="hero-sub">Kamba woodcarvers, Maasai beadworkers, and leather crafters get a storefront, studio-grade photography, and DHL/Aramex fulfillment &mdash; without handing half the sale to a middleman.</p>
+    <div class="hero-actions">
+      <button class="btn-primary">List your craft &rarr;</button>
+      <button class="btn-ghost">See how margins change</button>
+    </div>
+    <div class="hero-stats">
+      <div><div class="stat-num">68%</div><div class="stat-label">Kept by the artisan</div></div>
+      <div><div class="stat-num">140+</div><div class="stat-label">Countries reached</div></div>
+      <div><div class="stat-num">3.2&times;</div><div class="stat-label">Avg. income lift</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="problem">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">01 &mdash; The Gap</span>
+      <h2>The carving is world&#8209;class. The margin never leaves the middleman.</h2>
+      <p class="section-sub">A hand-carved Kamba piece can sell for 8&ndash;10&times; its farm-gate price abroad &mdash; but the maker rarely sees more than a fraction of that markup.</p>
+    </div>
+    <div class="margin-compare reveal">
+      <div class="margin-col">
+        <h3>Through a middleman</h3>
+        <div class="bar-row">
+          <div>
+            <div class="bar-track"><div class="bar-fill clay" data-target="22"></div></div>
+            <div class="bar-figure">22%</div>
+            <div class="bar-figure-label">to the maker</div>
+          </div>
+          <div>
+            <div class="bar-track"><div class="bar-fill" style="background:linear-gradient(180deg,#4a4438,#2a261f);" data-target="78"></div></div>
+            <div class="bar-figure">78%</div>
+            <div class="bar-figure-label">export chain &amp; retail</div>
+          </div>
+        </div>
+      </div>
+      <div class="margin-col">
+        <h3>Through Artisan&#8209;Direct</h3>
+        <div class="bar-row">
+          <div>
+            <div class="bar-track"><div class="bar-fill jade" data-target="68"></div></div>
+            <div class="bar-figure">68%</div>
+            <div class="bar-figure-label">to the maker</div>
+          </div>
+          <div>
+            <div class="bar-track"><div class="bar-fill" style="background:linear-gradient(180deg,#4a4438,#2a261f);" data-target="32"></div></div>
+            <div class="bar-figure">32%</div>
+            <div class="bar-figure-label">platform, shipping, payment</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="solution">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">02 &mdash; The Platform</span>
+      <h2>Shopify for the Jua Kali.</h2>
+      <p class="section-sub">Everything a workshop needs to sell internationally, handled centrally &mdash; so the maker stays at the bench, not on the phone with a freight broker.</p>
+    </div>
+    <div class="feature-grid reveal">
+      <div class="feature-card">
+        <span class="feature-tag">STOREFRONT</span>
+        <div class="feature-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 9l1-5h16l1 5M4 9v11h16V9M4 9h16M9 13h6"/></svg>
+        </div>
+        <h3>Your own digital shop</h3>
+        <p>A branded page for every workshop, in the languages and currencies your buyers use &mdash; live in under a week.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-tag">PHOTOGRAPHY</span>
+        <div class="feature-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="13" r="4"/><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/></svg>
+        </div>
+        <h3>Studio-grade imagery</h3>
+        <p>A mobile photo crew visits your workshop &mdash; every piece shot the way a Nairobi or New York gallery would shoot it.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-tag">LOGISTICS</span>
+        <div class="feature-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="14" height="10" rx="1"/><path d="M16 10h3l3 3v4h-6z"/><circle cx="7" cy="19" r="1.6"/><circle cx="18" cy="19" r="1.6"/></svg>
+        </div>
+        <h3>Customs &amp; carrier, sorted</h3>
+        <p>Direct integration with DHL and Aramex handles duties, customs paperwork, and door-to-door tracking automatically.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-tag">PAYMENTS</span>
+        <div class="feature-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>
+        </div>
+        <h3>Paid in M-Pesa or bank</h3>
+        <p>Buyers pay in dollars, euros, or pounds. Makers get paid in the account and currency they already use.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-tag">AUTHENTICITY</span>
+        <div class="feature-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l7 3v6c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6z"/></svg>
+        </div>
+        <h3>A maker's mark on every piece</h3>
+        <p>Each item ships with the carver or beader's name, region, and story &mdash; the provenance buyers are paying for.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-tag">DEMAND SIGNAL</span>
+        <div class="feature-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19V9M12 19V5M20 19v-7"/></svg>
+        </div>
+        <h3>Know what sells, where</h3>
+        <p>A simple dashboard shows which pieces move in which markets, so workshops know what to carve next.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="crafts">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">03 &mdash; On the Platform</span>
+      <h2>Three crafts. One export lane.</h2>
+    </div>
+    <div class="craft-grid reveal">
+      <div class="craft-card" style="--accent-glow:var(--clay-glow);">
+        <div class="craft-num">01 / WOOD</div>
+        <div class="craft-name">Kamba Carving</div>
+        <p class="craft-desc">Ebony and mahogany figures, bowls, and masks, carved using techniques passed through generations in Machakos and Kitui.</p>
+        <div class="craft-region">Machakos &middot; Kitui</div>
+      </div>
+      <div class="craft-card" style="--accent-glow:var(--jade-glow);">
+        <div class="craft-num">02 / BEADS</div>
+        <div class="craft-name">Maasai Beadwork</div>
+        <p class="craft-desc">Collars, cuffs, and belts strung bead by bead, each color pattern carrying meaning specific to age, clan, and occasion.</p>
+        <div class="craft-region">Kajiado &middot; Narok</div>
+      </div>
+      <div class="craft-card" style="--accent-glow:rgba(205,164,61,0.35);">
+        <div class="craft-num">03 / LEATHER</div>
+        <div class="craft-name">Leather Craft</div>
+        <p class="craft-desc">Bags, sandals, and belts hand-tooled and stitched in Nairobi's leather quarters, built for daily use, not display cases.</p>
+        <div class="craft-region">Nairobi &middot; Kariokor</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="calculator">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">04 &mdash; Run the Numbers</span>
+      <h2>See your own margin, live.</h2>
+      <p class="section-sub">Move the slider to the price of a piece you'd sell abroad, then compare our two models.</p>
+    </div>
+    <div class="calc reveal">
+      <div>
+        <div class="calc-label">Sale price (USD)</div>
+        <div class="calc-price mono" id="priceDisplay">$120</div>
+        <input type="range" id="priceSlider" min="15" max="500" value="120" step="5">
+        <div class="slider-caption"><span>$15</span><span>$500</span></div>
+      </div>
+      <div class="calc-result">
+        <div class="model-toggle">
+          <button class="toggle-btn active" data-model="commission">Pay-as-you-sell &mdash; 15%</button>
+          <button class="toggle-btn" data-model="subscription">Workshop plan &mdash; $39/mo + 6%</button>
+        </div>
+        <div class="result-row"><span class="k">Platform takes</span><span class="v" id="platformTake">$18.00</span></div>
+        <div class="result-row hi"><span class="k">You keep</span><span class="v" id="artisanKeep">$102.00</span></div>
+        <div class="result-row"><span class="k">Shipping (DHL/Aramex, prepaid by buyer)</span><span class="v">Pass-through</span></div>
+        <p class="calc-note">Pay-as-you-sell has no monthly cost &mdash; best for new or seasonal sellers. The Workshop plan lowers the per-sale cut once a workshop is shipping ~10+ pieces a month.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="logistics">
+  <div class="wrap">
+    <div class="logi-strip reveal">
+      <div class="logi-item"><span class="logi-dot"></span>DHL Express integrated</div>
+      <div class="logi-item"><span class="logi-dot"></span>Aramex integrated</div>
+      <div class="logi-item"><span class="logi-dot"></span>Customs pre-cleared</div>
+      <div class="logi-item"><span class="logi-dot"></span>Door-to-door tracking</div>
+      <div class="logi-item"><span class="logi-dot"></span>M-Pesa payout</div>
+    </div>
+  </div>
+</section>
+
+<section id="join" class="cta-section">
+  <div class="wrap">
+    <span class="kicker">05 &mdash; Join the Lane</span>
+    <h2>Bring your bench online. Keep what you earn.</h2>
+    <p class="section-sub" style="margin:0 auto;">Onboarding takes one photography visit and about a week. No upfront fee to list.</p>
+    <div class="cta-buttons">
+      <button class="btn-primary" id="scrollToForm">Apply as an artisan</button>
+      <a href="artisan-dashboard.html" class="btn-ghost" style="text-decoration:none; display:inline-flex; align-items:center;">Preview the dashboard</a>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <form id="applyForm" class="apply-form reveal" novalidate>
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="fullName">Full name</label>
+          <input type="text" id="fullName" name="fullName" required autocomplete="name">
+          <span class="field-error" data-for="fullName">Enter your name.</span>
+        </div>
+        <div class="form-field">
+          <label for="craftType">Craft</label>
+          <select id="craftType" name="craftType" required>
+            <option value="" disabled selected>Choose one</option>
+            <option value="wood">Kamba wood carving</option>
+            <option value="bead">Maasai beadwork</option>
+            <option value="leather">Leather craft</option>
+            <option value="other">Other handmade craft</option>
+          </select>
+          <span class="field-error" data-for="craftType">Select a craft.</span>
+        </div>
+        <div class="form-field">
+          <label for="region">Workshop location</label>
+          <input type="text" id="region" name="region" placeholder="e.g. Machakos, Kenya" required>
+          <span class="field-error" data-for="region">Tell us where your workshop is.</span>
+        </div>
+        <div class="form-field">
+          <label for="contact">Phone or WhatsApp</label>
+          <input type="tel" id="contact" name="contact" placeholder="+254 7&hellip;" required>
+          <span class="field-error" data-for="contact">Enter a phone or WhatsApp number.</span>
+        </div>
+        <div class="form-field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required autocomplete="email">
+          <span class="field-error" data-for="email">Enter a valid email address.</span>
+        </div>
+        <div class="form-field">
+          <label for="portfolio">Instagram / portfolio link <span class="opt">(optional)</span></label>
+          <input type="text" id="portfolio" name="portfolio" placeholder="instagram.com/&hellip;">
+        </div>
+        <div class="form-field form-field-wide">
+          <label for="about">About your work</label>
+          <textarea id="about" name="about" rows="4" placeholder="What do you make, and roughly how many pieces a month could you ship?" required></textarea>
+          <span class="field-error" data-for="about">Tell us a little about your work.</span>
+        </div>
+      </div>
+      <button type="submit" class="btn-primary" id="submitApply">Send application</button>
+      <p id="formStatus" class="form-status" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<footer class="wrap">
+  <div>&copy; 2026 Artisan-Direct Export Hub &middot; Nairobi, Kenya</div>
+  <div>Kamba Wood &middot; Maasai Bead &middot; Leather Craft</div>
+</footer>
+
+<script>
+// ---------- Hero loom / network canvas ----------
+const canvas = document.getElementById('loomCanvas');
+const ctx = canvas.getContext('2d');
+let W, H;
+function resize(){
+  W = canvas.width = canvas.offsetWidth * devicePixelRatio;
+  H = canvas.height = canvas.offsetHeight * devicePixelRatio;
+}
+window.addEventListener('resize', () => { resize(); buildNodes(); });
+
+let nodes = [];
+const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function buildNodes(){
+  nodes = [];
+  const cols = 12, rows = 7;
+  const marginX = W * 0.06, marginY = H * 0.12;
+  const spacingX = (W - marginX*2) / (cols-1);
+  const spacingY = (H - marginY*2) / (rows-1);
+  for(let r=0; r<rows; r++){
+    for(let c=0; c<cols; c++){
+      // beadwork-like offset pattern: skip some nodes in a triangular rhythm
+      const skip = (r % 2 === 0) ? (c % 3 === 1) : (c % 3 === 0);
+      if (skip && Math.random() > 0.4) continue;
+      nodes.push({
+        x: marginX + c*spacingX + (Math.random()-0.5)*6,
+        y: marginY + r*spacingY + (Math.random()-0.5)*6,
+        r: Math.random()*1.4 + 1,
+        phase: Math.random()*Math.PI*2,
+        speed: 0.4 + Math.random()*0.6,
+        colorMix: Math.random()
+      });
+    }
+  }
+}
+
+function colorFor(mix, alpha){
+  // interpolate between jade and clay/brass for beadwork palette feel
+  if (mix < 0.5){
+    return `rgba(53,226,176,${alpha})`;
+  } else if (mix < 0.8){
+    return `rgba(205,164,61,${alpha})`;
+  } else {
+    return `rgba(200,69,43,${alpha})`;
+  }
+}
+
+let t = 0;
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  t += 0.006;
+
+  // connecting lines (nearest-neighbor lattice, pulsing)
+  const maxDist = Math.min(W,H) * 0.11;
+  for(let i=0;i<nodes.length;i++){
+    for(let j=i+1;j<nodes.length;j++){
+      const a = nodes[i], b = nodes[j];
+      const dx = a.x-b.x, dy = a.y-b.y;
+      const dist = Math.sqrt(dx*dx+dy*dy);
+      if (dist < maxDist){
+        const pulse = (Math.sin(t*a.speed + a.phase) + 1) / 2;
+        const alpha = (1 - dist/maxDist) * 0.14 * pulse + 0.02;
+        ctx.strokeStyle = colorFor((a.colorMix+b.colorMix)/2, alpha);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+    }
+  }
+
+  // nodes
+  for(const n of nodes){
+    const pulse = (Math.sin(t*n.speed + n.phase) + 1) / 2;
+    const alpha = 0.35 + pulse*0.5;
+    ctx.beginPath();
+    ctx.fillStyle = colorFor(n.colorMix, alpha);
+    ctx.arc(n.x, n.y, n.r * devicePixelRatio * (0.8+pulse*0.6), 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  // vignette fade toward hero copy (left) so text stays legible
+  const grad = ctx.createLinearGradient(0,0,W,0);
+  grad.addColorStop(0, 'rgba(16,13,10,0.92)');
+  grad.addColorStop(0.55, 'rgba(16,13,10,0.35)');
+  grad.addColorStop(1, 'rgba(16,13,10,0)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,W,H);
+  const gradBottom = ctx.createLinearGradient(0,H*0.7,0,H);
+  gradBottom.addColorStop(0,'rgba(16,13,10,0)');
+  gradBottom.addColorStop(1,'rgba(16,13,10,0.9)');
+  ctx.fillStyle = gradBottom;
+  ctx.fillRect(0,H*0.7,W,H*0.3);
+
+  if(!prefersReduced) requestAnimationFrame(draw);
+}
+
+resize();
+buildNodes();
+draw();
+if(prefersReduced){ /* draw one static frame only, already called above */ }
+
+// ---------- Scroll reveal ----------
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); });
+}, {threshold: 0.15});
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ---------- Margin bars animate on reveal ----------
+const bars = document.querySelectorAll('.bar-fill');
+const barObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      bars.forEach(b => b.style.height = b.dataset.target + '%');
+      barObserver.disconnect();
+    }
+  });
+}, {threshold:0.3});
+const marginSection = document.querySelector('.margin-compare');
+if(marginSection) barObserver.observe(marginSection);
+
+// ---------- Calculator ----------
+const priceSlider = document.getElementById('priceSlider');
+const priceDisplay = document.getElementById('priceDisplay');
+const platformTake = document.getElementById('platformTake');
+const artisanKeep = document.getElementById('artisanKeep');
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+let currentModel = 'commission';
+
+function updateCalc(){
+  const price = parseFloat(priceSlider.value);
+  priceDisplay.textContent = '$' + price.toFixed(0);
+  if(currentModel === 'commission'){
+    // Pay-as-you-sell: 15% commission, no monthly fee
+    const take = price * 0.15;
+    platformTake.textContent = '$' + take.toFixed(2);
+    artisanKeep.textContent = '$' + (price - take).toFixed(2);
+  } else {
+    // Workshop plan: $39/mo flat + 6% per sale, amortized over ~10 pieces/mo
+    const commission = price * 0.06;
+    const amortizedSub = 39 / 10;
+    const totalTake = commission + amortizedSub;
+    platformTake.textContent = '$' + totalTake.toFixed(2) + ' (6% + share of $39/mo)';
+    artisanKeep.textContent = '$' + (price - totalTake).toFixed(2);
+  }
+}
+priceSlider.addEventListener('input', updateCalc);
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentModel = btn.dataset.model;
+    updateCalc();
+  });
+});
+updateCalc();
+</script>
+
+</body>
+</html>

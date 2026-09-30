@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galaxy Gallery • For My Princess</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Playfair+Display:wght@700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body, html {
+            width: 100%; height: 100%;
+            overflow: hidden;
+            background: #0b0214;
+            font-family: 'Poppins', sans-serif;
+            color: white;
+        }
+
+        canvas { position: fixed; top: 0; left: 0; z-index: 1; }
+
+        .card {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            background: rgba(255,255,255,0.09);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.25);
+            padding: 3.5rem 4.5rem;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.7);
+            cursor: pointer;
+            transition: all 1.3s ease;
+        }
+
+        .card:hover { transform: translate(-50%, -50%) scale(1.06); }
+
+        .card h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.2rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 25px #ff99cc;
+        }
+
+        .illustration { font-size: 6rem; margin: 1.2rem 0; animation: float 4s ease-in-out infinite; }
+        .card p { color: #ffb3cc; letter-spacing: 5px; font-weight: 600; }
+
+        @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-25px); } }
+
+        .fade-out {
+            opacity: 0 !important;
+            transform: translate(-50%, -50%) scale(0.7) !important;
+        }
+
+        .gallery {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; align-items: center; justify-content: center;
+            z-index: 5; padding: 2rem; overflow: auto;
+            background: rgba(11,2,20,0.75);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 22px; overflow: hidden; cursor: pointer;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            transition: all 0.5s ease;
+        }
+
+        .gallery-item:hover { transform: scale(1.08) translateY(-15px); }
+
+        .gallery-item img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+
+        .gallery-item:hover img { transform: scale(1.2); }
+
+        .overlay {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.95));
+            padding: 1.8rem 1.2rem 1.2rem;
+            opacity: 0; transform: translateY(30px);
+            transition: all 0.4s ease;
+        }
+
+        .gallery-item:hover .overlay { opacity: 1; transform: translateY(0); }
+
+        /* Anniversary Countdown */
+        .countdown {
+            position: fixed;
+            top: 20px; left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 105, 180, 0.15);
+            backdrop-filter: blur(12px);
+            padding: 12px 30px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 182, 193, 0.4);
+            z-index: 20;
+            font-size: 1.1rem;
+            text-align: center;
+            display: none;
+        }
+
+        .music-control {
+            position: fixed; bottom: 30px; right: 30px; z-index: 50;
+            background: rgba(0,0,0,0.6); padding: 12px 24px;
+            border-radius: 50px; backdrop-filter: blur(10px);
+            cursor: pointer; font-size: 1.1rem;
+            user-select: none;
+        }
+
+        .love-message {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(20,5,35,0.97);
+            padding: 3rem 3.5rem;
+            border-radius: 25px;
+            max-width: 460px;
+            text-align: center;
+            z-index: 100;
+            display: none;
+            border: 1px solid #ff99cc;
+            box-shadow: 0 0 70px rgba(255, 100, 180, 0.7);
+        }
+
+        .typewriter {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            line-height: 1.7;
+            color: #ffe6f0;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="galaxyCanvas"></canvas>
+
+    <!-- Anniversary Countdown -->
+    <div class="countdown" id="countdown">
+        <strong>Our Anniversary in</strong><br>
+        <span id="countdownTimer" style="font-size:1.4rem; color:#ffb3cc;"></span>
+    </div>
+
+    <!-- Intro Card -->
+    <div class="card" id="loveCard">
+        <h1>Our Galaxy</h1>
+        <div class="illustration">🐻❤️🐰🌌</div>
+        <p>For My Princess</p>
+    </div>
+
+    <!-- Gallery -->
+    <div class="gallery" id="gallery">
+        <div class="gallery-grid" id="galleryGrid"></div>
+    </div>
+
+    <!-- Love Message -->
+    <div class="love-message" id="loveMessage">
+        <h2 id="messageTitle" style="color:#ff99cc;"></h2>
+        <p class="typewriter" id="messageText"></p>
+        <button onclick="closeMessage()" style="margin-top:25px; padding:12px 32px; background:#ff99cc; border:none; border-radius:50px; color:#000; font-weight:bold; cursor:pointer;">Close</button>
+    </div>
+
+    <!-- Music -->
+    <div class="music-control" id="musicControl">♪ Play Our Song</div>
+
+    <audio id="bgMusic" loop>
+        <source src="https://assets.mixkit.co/sfx/preview/296/296.wav" type="audio/wav">
+    </audio>
+
+    <script>
+        // Canvas Setup
+        const canvas = document.getElementById('galaxyCanvas');
+        const ctx = canvas.getContext('2d');
+        let w = canvas.width = window.innerWidth;
+        let h = canvas.height = window.innerHeight;
+
+        let active = false;
+        let hearts = [];
+        let stars = [];
+
+        const colors = ['#ff007f', '#ff69b4', '#00ffff', '#ff00ff', '#ffb3cc', '#ff99ee'];
+
+        class Star {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = (Math.random() - 0.5) * 50;
+                this.y = (Math.random() - 0.5) * 50;
+                this.z = Math.random() * w * 2 + 200;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.size = Math.random() * 2.5 + 1;
+            }
+            update() { this.z -= active ? 15 : 2.6; if (this.z < 10) this.reset(); }
+            draw() {
+                const scale = 260 / this.z;
+                const px = this.x * scale * (w/160) + w/2;
+                const py = this.y * scale * (h/160) + h/2;
+                const r = this.size * (3 - this.z/w) * 7.5;
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(px, py, Math.max(0.4, r), 0, Math.PI*2);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = active ? 28 : 12;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        class Heart {
+            constructor(x, y) {
+                this.x = x; this.y = y;
+                this.size = Math.random() * 20 + 16;
+                this.speed = Math.random() * 3 + 2;
+                this.opacity = 1;
+            }
+            update() { this.y -= this.speed; this.opacity -= 0.012; }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                ctx.font = `${this.size}px Arial`;
+                ctx.fillText('❤', this.x, this.y);
+                ctx.restore();
+            }
+        }
+
+        for (let i = 0; i < 520; i++) stars.push(new Star());
+
+        window.addEventListener('resize', () => {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+        });
+
+        function animate() {
+            ctx.fillStyle = 'rgba(11, 2, 20, 0.2)';
+            ctx.fillRect(0, 0, w, h);
+            stars.forEach(s => { s.update(); s.draw(); });
+            hearts = hearts.filter(h => { h.update(); h.draw(); return h.opacity > 0; });
+            requestAnimationFrame(animate);
+        }
+
+        // ================== ANNIVERSARY COUNTDOWN ==================
+        function startCountdown() {
+            // ←←← CHANGE THIS DATE TO YOUR ANNIVERSARY ←←←
+            const anniversaryDate = new Date("2026-12-25"); // Example: December 25, 2026
+
+            const timerEl = document.getElementById('countdownTimer');
+            const countdownBox = document.getElementById('countdown');
+
+            setInterval(() => {
+                const now = new Date().getTime();
+                const distance = anniversaryDate - now;
+
+                if (distance < 0) {
+                    timerEl.innerHTML = "Happy Anniversary, My Love ❤️";
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                timerEl.textContent = `${days} days`;
+            }, 1000);
+
+            countdownBox.style.display = 'block';
+        }
+
+        // ================== GALLERY ==================
+        const galleryData = [
+            { src: "https://picsum.photos/id/1015/900/600", title: "Our First Star", msg: "The day you smiled at me, the whole universe lit up ❤️" },
+            { src: "https://picsum.photos/id/1016/900/600", title: "Nebula Kiss", msg: "Every moment with you feels like floating through stars..." },
+            { src: "https://picsum.photos/id/1033/900/600", title: "Eternal Glow", msg: "You are my favorite constellation, my princess." },
+            { src: "https://picsum.photos/id/133/900/600", title: "Moonlight Love", msg: "I would cross galaxies just to hold your hand." },
+            { src: "https://picsum.photos/id/201/900/600", title: "Forever Yours", msg: "You make my heart dance among the stars every night." },
+            { src: "https://picsum.photos/id/251/900/600", title: "Celestial Hug", msg: "Your hugs are my safe place in this vast universe." },
+            { src: "https://picsum.photos/id/1018/900/600", title: "Starry Promise", msg: "I promise to love you until the last star fades." },
+            { src: "https://picsum.photos/id/133/900/600", title: "Our Little World", msg: "With you, even the darkest night feels warm." },
+            { src: "https://picsum.photos/id/201/900/600", title: "Infinite Love", msg: "My love for you is bigger than the galaxy." },
+            { src: "https://picsum.photos/id/316/900/600", title: "Together Forever", msg: "No matter the distance, my heart is always with you." }
+        ];
+
+        function createGallery() {
+            const grid = document.getElementById('galleryGrid');
+            grid.innerHTML = '';
+            galleryData.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'gallery-item';
+                div.innerHTML = `
+                    <img src="${item.src}" loading="lazy">
+                    <div class="overlay"><h3>${item.title}</h3></div>
+                `;
+                div.onclick = () => showLoveMessage(item.title, item.msg);
+                grid.appendChild(div);
+            });
+        }
+
+        function showLoveMessage(title, text) {
+            document.getElementById('messageTitle').textContent = title;
+            document.getElementById('messageText').textContent = text;
+            document.getElementById('loveMessage').style.display = 'block';
+        }
+
+        function closeMessage() {
+            document.getElementById('loveMessage').style.display = 'none';
+        }
+
+        // Music Control
+        const music = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicControl');
+        let isPlaying = false;
+
+        musicBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                music.pause();
+                musicBtn.textContent = '♪ Play Our Song';
+            } else {
+                music.play();
+                musicBtn.textContent = '⏸ Pause Music';
+            }
+            isPlaying = !isPlaying;
+        });
+
+        // Main Interactions
+        document.getElementById('loveCard').addEventListener('click', () => {
+            active = true;
+            const card = document.getElementById('loveCard');
+            card.classList.add('fade-out');
+            setTimeout(() => {
+                card.style.display = 'none';
+                document.getElementById('gallery').style.display = 'flex';
+            }, 1300);
+        });
+
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            for (let i = 0; i < 12; i++) {
+                hearts.push(new Heart(e.clientX - rect.left + (Math.random()*60 - 30), e.clientY - rect.top + (Math.random()*60 - 30)));
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (Math.random() > 0.78) hearts.push(new Heart(e.clientX, e.clientY));
+        });
+
+        // Start Everything
+        startCountdown();
+        createGallery();
+        animate();
+    </script>
+</body>
+</html>

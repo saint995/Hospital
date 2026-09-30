@@ -1,0 +1,534 @@
+ <!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArtisanDirect • Export Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap');
+        
+        :root {
+            --primary: #e07a5f;
+        }
+        
+        .tail-container {
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+        
+        .logo-font {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .hero-bg {
+            background: linear-gradient(45deg, #1a2a1f, #3d2a1f);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .product-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .product-card:hover {
+            transform: translateY(-12px) scale(1.03);
+            box-shadow: 0 25px 50px -12px rgb(224 122 95 / 0.4);
+        }
+
+        .neon-text {
+            text-shadow: 0 0 10px #e07a5f,
+                        0 0 20px #e07a5f;
+        }
+
+        .african-pattern {
+            background-image: 
+                linear-gradient(45deg, rgba(224,122,95,0.1) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(224,122,95,0.1) 25%, transparent 25%);
+            background-size: 40px 40px;
+        }
+    </style>
+</head>
+<body class="tail-container bg-zinc-950 text-zinc-100">
+    <!-- NAVBAR -->
+    <nav class="bg-black/80 backdrop-blur-lg border-b border-zinc-800 fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-gradient-to-br from-orange-500 to-amber-600 rounded-2xl flex items-center justify-center text-2xl">🪵</div>
+                <div>
+                    <span class="logo-font text-3xl font-semibold tracking-tighter neon-text">Artisan</span>
+                    <span class="logo-font text-3xl font-semibold tracking-tighter text-orange-400">Direct</span>
+                </div>
+            </div>
+            
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+                <a href="#" onclick="navigateTo('marketplace')" class="hover:text-orange-400 transition-colors">Marketplace</a>
+                <a href="#" onclick="navigateTo('sellers')" class="hover:text-orange-400 transition-colors">For Artisans</a>
+                <a href="#" onclick="navigateTo('stories')" class="hover:text-orange-400 transition-colors">Stories</a>
+                <a href="#" onclick="navigateTo('about')" class="hover:text-orange-400 transition-colors">About</a>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button onclick="toggleCart()" 
+                        class="flex items-center gap-2 px-5 py-2.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-3xl text-sm font-medium transition-all">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span id="cart-count" class="text-orange-400 font-semibold">0</span>
+                </button>
+                
+                <button onclick="showLoginModal()"
+                        class="px-6 py-2.5 bg-white text-black rounded-3xl text-sm font-semibold hover:bg-orange-400 hover:text-white transition-all">
+                    Sell / Login
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <header class="hero-bg pt-24 pb-20 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 pt-20">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="space-y-8">
+                    <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-5 py-2 rounded-3xl text-sm border border-white/20">
+                        <span class="relative flex h-3 w-3">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                        </span>
+                        <span class="text-green-300">Now exporting to 87 countries • VAT reduced to 8%</span>
+                    </div>
+                    
+                    <h1 class="text-6xl md:text-7xl font-bold tracking-tighter leading-none logo-font">
+                        Direct from Kenyan<br>Hands to Your Home
+                    </h1>
+                    <p class="text-xl text-zinc-400 max-w-md">
+                        A futuristic marketplace connecting Kamba woodcarvers, Maasai beadworkers, and leather artisans straight to global buyers.
+                    </p>
+                    
+                    <div class="flex items-center gap-4">
+                        <button onclick="navigateTo('marketplace')" 
+                                class="px-8 py-4 bg-orange-500 hover:bg-orange-600 text-lg font-semibold rounded-3xl transition-all flex items-center gap-3">
+                            Explore Marketplace
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                        
+                        <button onclick="showSellerModal()" 
+                                class="px-8 py-4 border border-white/40 hover:border-white/70 text-lg font-medium rounded-3xl transition-all">
+                            Become a Seller
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center gap-8 pt-6">
+                        <div>
+                            <div class="text-3xl font-semibold text-orange-400">2,847</div>
+                            <div class="text-sm text-zinc-400">Active Artisans</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-semibold text-orange-400">14k+</div>
+                            <div class="text-sm text-zinc-400">Products Sold</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-semibold text-orange-400">92</div>
+                            <div class="text-sm text-zinc-400">Countries Reached</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="relative">
+                    <div class="aspect-square rounded-[3rem] overflow-hidden border-4 border-orange-400/30 shadow-2xl">
+                        <img src="https://picsum.photos/id/1015/800/800" alt="Kamba Wood Carver" 
+                             class="w-full h-full object-cover">
+                    </div>
+                    <div class="absolute -bottom-6 -left-6 bg-zinc-900 border border-orange-400/50 rounded-3xl p-6 max-w-[240px]">
+                        <div class="flex gap-4">
+                            <div class="w-12 h-12 bg-amber-300 rounded-2xl"></div>
+                            <div>
+                                <div class="font-semibold">Mwangi K.</div>
+                                <div class="text-xs text-orange-300">Kamba Wood Carver • Machakos</div>
+                                <div class="text-emerald-400 text-sm mt-2">Just sold to Germany 🇩🇪</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Floating badges -->
+        <div class="absolute top-40 right-12 bg-black/70 backdrop-blur-xl border border-white/10 px-6 py-3 rounded-3xl text-sm flex items-center gap-3">
+            <span class="text-2xl">🌍</span>
+            <div>
+                <div class="font-medium">Shipped with DHL &amp; Aramex</div>
+                <div class="text-xs text-zinc-400">Carbon-neutral delivery</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MARKETPLACE SECTION -->
+    <section id="marketplace-section" class="max-w-7xl mx-auto px-6 py-20">
+        <div class="flex justify-between items-end mb-10">
+            <div>
+                <h2 class="text-4xl font-semibold logo-font tracking-tight">Featured Treasures</h2>
+                <p class="text-zinc-400">Handcrafted with soul • Shipped worldwide</p>
+            </div>
+            <button onclick="filterProducts('all')" 
+                    class="text-sm px-6 py-3 border border-zinc-700 hover:border-orange-400 rounded-3xl transition-colors">All Products</button>
+        </div>
+
+        <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            <!-- Populated by JS -->
+        </div>
+    </section>
+
+    <!-- SELLER DASHBOARD TEASER -->
+    <section class="bg-gradient-to-br from-zinc-900 to-black py-20 border-t border-b border-zinc-800">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-12 gap-12 items-center">
+                <div class="md:col-span-5">
+                    <div class="bg-zinc-950 border border-orange-400/30 rounded-3xl p-10">
+                        <h3 class="text-3xl font-semibold mb-6">Seller Portal</h3>
+                        <div class="space-y-6">
+                            <div class="flex gap-4">
+                                <div class="flex-1 bg-zinc-900 p-5 rounded-2xl">
+                                    <div class="text-xs text-zinc-400">THIS MONTH</div>
+                                    <div class="text-4xl font-semibold text-emerald-400 mt-1">KSh 248,000</div>
+                                    <div class="text-sm">Revenue</div>
+                                </div>
+                                <div class="flex-1 bg-zinc-900 p-5 rounded-2xl">
+                                    <div class="text-xs text-zinc-400">ORDERS</div>
+                                    <div class="text-4xl font-semibold mt-1">17</div>
+                                    <div class="text-sm">Fulfilled</div>
+                                </div>
+                            </div>
+                            <button onclick="alert('Seller dashboard opening... (demo)')" 
+                                    class="w-full py-6 bg-gradient-to-r from-orange-500 to-amber-600 rounded-3xl text-lg font-semibold">
+                                Open My Studio Dashboard →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="md:col-span-7">
+                    <h2 class="text-5xl font-bold logo-font leading-none tracking-tighter mb-6">
+                        Keep 85% of every sale.<br>
+                        <span class="text-orange-400">No middlemen.</span>
+                    </h2>
+                    <p class="text-xl text-zinc-300 max-w-lg">
+                        Upload your products. We handle photography enhancement, global listings, payments, and logistics.
+                    </p>
+                    <ul class="mt-8 space-y-4">
+                        <li class="flex items-center gap-4"><i class="fa-solid fa-check text-emerald-400"></i> AI-powered product photography</li>
+                        <li class="flex items-center gap-4"><i class="fa-solid fa-check text-emerald-400"></i> Real-time shipment tracking</li>
+                        <li class="flex items-center gap-4"><i class="fa-solid fa-check text-emerald-400"></i> Instant payouts via M-Pesa</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-black py-20 border-t border-zinc-800">
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-12">
+            <div>
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-600 rounded-2xl flex items-center justify-center text-2xl">🪵</div>
+                    <span class="logo-font text-3xl font-bold">ArtisanDirect</span>
+                </div>
+                <p class="text-sm text-zinc-400">Empowering Kenyan creators on the global stage.</p>
+                <div class="mt-8 text-xs text-zinc-500">© 2026 • Nairobi, Kenya</div>
+            </div>
+            <div>
+                <div class="font-semibold mb-4">Platform</div>
+                <ul class="space-y-3 text-sm">
+                    <li><a href="#" class="hover:text-orange-400">Marketplace</a></li>
+                    <li><a href="#" class="hover:text-orange-400">For Sellers</a></li>
+                    <li><a href="#" class="hover:text-orange-400">Shipping</a></li>
+                </ul>
+            </div>
+            <div>
+                <div class="font-semibold mb-4">Community</div>
+                <ul class="space-y-3 text-sm">
+                    <li><a href="#" class="hover:text-orange-400">Artisan Stories</a></li>
+                    <li><a href="#" class="hover:text-orange-400">Impact Report</a></li>
+                    <li><a href="#" class="hover:text-orange-400">Join the Movement</a></li>
+                </ul>
+            </div>
+            <div>
+                <div class="font-semibold mb-4">Contact</div>
+                <div class="text-sm space-y-2">
+                    <div>hello@artisandirect.co.ke</div>
+                    <div>+254 700 123 456</div>
+                    <div class="pt-4">
+                        <button onclick="window.location.reload()" 
+                                class="text-xs border border-white/30 px-5 py-3 rounded-3xl hover:bg-white/5">
+                            BACK TO TOP ↑
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- CART MODAL -->
+    <div id="cart-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-xl z-[100] flex items-end md:items-center justify-center">
+        <div class="bg-zinc-900 w-full max-w-lg md:rounded-3xl max-h-[90vh] overflow-hidden">
+            <div class="p-8 border-b border-zinc-700 flex justify-between items-center">
+                <h3 class="text-2xl font-semibold">Your Cart</h3>
+                <button onclick="toggleCart()" class="text-3xl leading-none">×</button>
+            </div>
+            <div id="cart-items" class="p-8 space-y-8 overflow-auto max-h-[60vh]">
+                <!-- JS populated -->
+            </div>
+            <div class="p-8 border-t border-zinc-700">
+                <div class="flex justify-between mb-6">
+                    <span class="text-lg">Total</span>
+                    <span id="cart-total" class="text-3xl font-semibold text-orange-400">KSh 0</span>
+                </div>
+                <button onclick="checkout()" 
+                        class="w-full py-6 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl text-lg font-semibold">
+                    Proceed to Checkout • DHL Ready
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGIN MODAL -->
+    <div id="login-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[200]">
+        <div class="bg-zinc-900 w-full max-w-md rounded-3xl p-10">
+            <h3 class="text-3xl font-semibold mb-8 text-center">Join the Movement</h3>
+            
+            <div class="space-y-6">
+                <button onclick="fakeLogin('artisan')" 
+                        class="w-full py-6 border border-orange-400/70 hover:bg-orange-400/10 rounded-3xl text-lg flex items-center justify-center gap-4">
+                    <span class="text-3xl">🪵</span>
+                    <span>I am an Artisan</span>
+                </button>
+                
+                <button onclick="fakeLogin('buyer')" 
+                        class="w-full py-6 border border-white/30 hover:bg-white/5 rounded-3xl text-lg">
+                    I am a Buyer
+                </button>
+            </div>
+            
+            <button onclick="hideLoginModal()" class="mt-8 text-sm text-zinc-400 underline">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // Tailwind script already loaded via CDN
+        
+        let cart = [];
+        
+        const products = [
+            {
+                id: 1,
+                name: "Kamba Lion Sculpture",
+                price: 12500,
+                artisan: "Joseph Mutua",
+                location: "Machakos",
+                img: "https://picsum.photos/id/1015/600/600",
+                category: "wood"
+            },
+            {
+                id: 2,
+                name: "Maasai Beaded Necklace",
+                price: 4500,
+                artisan: "Naisula Ole",
+                location: "Kajiado",
+                img: "https://picsum.photos/id/201/600/600",
+                category: "bead"
+            },
+            {
+                id: 3,
+                name: "Hand-stitched Leather Bag",
+                price: 8900,
+                artisan: "Fatuma Ali",
+                location: "Mombasa",
+                img: "https://picsum.photos/id/301/600/600",
+                category: "leather"
+            },
+            {
+                id: 4,
+                name: "Ebony Wood Mask",
+                price: 6700,
+                artisan: "Kipchoge Rono",
+                location: "Eldoret",
+                img: "https://picsum.photos/id/401/600/600",
+                category: "wood"
+            }
+        ];
+        
+        function renderProducts(filteredProducts) {
+            const container = document.getElementById('products-grid');
+            container.innerHTML = '';
+            
+            filteredProducts.forEach(product => {
+                const card = document.createElement('div');
+                card.className = `product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden cursor-pointer`;
+                card.innerHTML = `
+                    <div class="relative">
+                        <img src="${product.img}" class="w-full aspect-square object-cover">
+                        <div class="absolute top-4 right-4 bg-black/70 text-xs px-3 py-1 rounded-3xl backdrop-blur-sm">
+                            ${product.location}
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="font-medium">${product.name}</div>
+                        <div class="text-sm text-zinc-400">${product.artisan}</div>
+                        <div class="mt-6 flex justify-between items-end">
+                            <div>
+                                <span class="text-3xl font-semibold">KSh ${product.price.toLocaleString()}</span>
+                            </div>
+                            <button onclick="addToCart(${product.id}); event.stopImmediatePropagation();" 
+                                    class="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-sm rounded-3xl transition-colors">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                `;
+                card.onclick = () => viewProduct(product);
+                container.appendChild(card);
+            });
+        }
+        
+        function filterProducts(cat) {
+            if (cat === 'all') {
+                renderProducts(products);
+            } else {
+                const filtered = products.filter(p => p.category === cat);
+                renderProducts(filtered);
+            }
+        }
+        
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            cart.push({...product});
+            updateCartCount();
+            
+            // Toast
+            const toast = document.createElement('div');
+            toast.className = "fixed bottom-8 right-8 bg-emerald-600 text-white px-8 py-4 rounded-3xl shadow-2xl flex items-center gap-3 z-[300]";
+            toast.innerHTML = `✅ ${product.name} added to cart`;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => toast.remove(), 2800);
+        }
+        
+        function updateCartCount() {
+            document.getElementById('cart-count').textContent = cart.length;
+        }
+        
+        function toggleCart() {
+            const modal = document.getElementById('cart-modal');
+            const itemsContainer = document.getElementById('cart-items');
+            const totalEl = document.getElementById('cart-total');
+            
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                
+                itemsContainer.innerHTML = '';
+                let total = 0;
+                
+                cart.forEach((item, index) => {
+                    total += item.price;
+                    const div = document.createElement('div');
+                    div.className = "flex gap-6";
+                    div.innerHTML = `
+                        <img src="${item.img}" class="w-24 h-24 object-cover rounded-2xl">
+                        <div class="flex-1">
+                            <div class="font-medium">${item.name}</div>
+                            <div class="text-xs text-zinc-400">${item.artisan}</div>
+                            <div class="mt-6 text-xl font-semibold">KSh ${item.price}</div>
+                        </div>
+                        <button onclick="removeFromCart(${index});" class="text-red-400 hover:text-red-500 text-xl">×</button>
+                    `;
+                    itemsContainer.appendChild(div);
+                });
+                
+                totalEl.textContent = `KSh ${total.toLocaleString()}`;
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+        
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartCount();
+            toggleCart(); // refresh
+            toggleCart(); // reopen
+        }
+        
+        function checkout() {
+            if (cart.length === 0) return;
+            alert("🎉 Thank you! Your order has been placed.\n\nTracking link sent to your email.\nDHL pickup scheduled from artisan studio.");
+            cart = [];
+            updateCartCount();
+            toggleCart();
+        }
+        
+        function viewProduct(product) {
+            alert(`Product Details:\n\n${product.name}\nBy ${product.artisan} (${product.location})\n\nPrice: KSh ${product.price}\n\nHigh-resolution photos & story available in full platform.`);
+        }
+        
+        function showLoginModal() {
+            document.getElementById('login-modal').classList.remove('hidden');
+        }
+        
+        function hideLoginModal() {
+            document.getElementById('login-modal').classList.add('hidden');
+        }
+        
+        function fakeLogin(type) {
+            hideLoginModal();
+            setTimeout(() => {
+                if (type === 'artisan') {
+                    alert("Welcome back, Artisan! 🎨\n\nYour dashboard is ready.");
+                } else {
+                    alert("Welcome, Global Explorer! 🌍\n\nHappy shopping.");
+                }
+            }, 600);
+        }
+        
+        function showSellerModal() {
+            alert("🚀 Seller onboarding flow starting...\n\nStep 1: Verify your artisan ID\nStep 2: Upload 5+ product photos\nStep 3: Connect M-Pesa wallet");
+        }
+        
+        function navigateTo(section) {
+            if (section === 'marketplace') {
+                document.getElementById('marketplace-section').scrollIntoView({ behavior: 'smooth' });
+            } else {
+                alert(`Navigating to ${section}... (Full version would load the respective page)`);
+            }
+        }
+        
+        // Initialize
+        window.onload = function() {
+            renderProducts(products);
+            
+            // Keyboard shortcut hint
+            console.log('%cArtisanDirect Demo ready. Press "C" for cart.', 'color: #e07a5f; font-family: monospace');
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key.toLowerCase() === 'c') {
+                    toggleCart();
+                }
+            });
+            
+            // Fake live order notification every 25s
+            setInterval(() => {
+                if (Math.random() > 0.6) {
+                    const toast = document.createElement('div');
+                    toast.className = "fixed bottom-24 left-8 bg-zinc-800 border-l-4 border-orange-400 text-sm px-6 py-4 rounded-r-3xl shadow-xl flex items-center gap-3 z-[250]";
+                    toast.innerHTML = `🌍 New order from Berlin for a Maasai bracelet`;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 4500);
+                }
+            }, 25000);
+        };
+    </script>
+
+</body>
+</html>

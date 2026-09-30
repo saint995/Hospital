@@ -1,0 +1,206 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galaxy Gallery</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #0b0214;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Glassmorphism Card Style */
+        .card {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2.5rem 3.5rem;
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            transition: opacity 1s ease, transform 1s ease;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .card:hover {
+            transform: scale(1.02);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .card h1 {
+            color: #ffffff;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Cute Character / Heart Placeholder */
+        .illustration {
+            font-size: 4.5rem;
+            margin-bottom: 1.5rem;
+            animation: float 3s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        .card p {
+            color: #ff758c;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .fade-out {
+            opacity: 0;
+            transform: scale(0.9) translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="galaxyCanvas"></canvas>
+
+    <div class="card" id="loveCard">
+        <h1>Galaxy Gallery</h1>
+        <div class="illustration">🐻❤️🐰</div>
+        <p>For My Princess</p>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('galaxyCanvas');
+        const ctx = canvas.getContext('2d');
+        const card = document.getElementById('loveCard');
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        let activeAnimation = false;
+        const numParticles = 450;
+        const particles = [];
+
+        // Dynamic resizing
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        // Color palette for the colorful neon stars seen in the video
+        const colors = [
+            '#ff007f', '#ff00ff', '#00ffff', '#00ffaa', 
+            '#ffaa00', '#ff3366', '#33ccff', '#ffeb3b'
+        ];
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                // Start from center
+                this.x = (Math.random() - 0.5) * 20;
+                this.y = (Math.random() - 0.5) * 20;
+                // Z depth element to simulate moving forward
+                this.z = Math.random() * width; 
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.radius = Math.random() * 1.5 + 0.5;
+            }
+
+            update() {
+                // Move closer (decrease Z depth)
+                this.z -= activeAnimation ? 8 : 1.5; 
+                
+                if (this.z <= 0) {
+                    this.reset();
+                    this.z = width;
+                }
+            }
+
+            draw() {
+                // Project 3D coordinates onto 2D screen space
+                const k = 128.0 / this.z;
+                const px = this.x * k * width / 100 + width / 2;
+                const py = this.y * k * height / 100 + height / 2;
+
+                // Increase size as it gets closer to the viewer
+                const r = this.radius * (1 - this.z / width) * 6;
+
+                if (px >= 0 && px <= width && py >= 0 && py <= height) {
+                    ctx.beginPath();
+                    ctx.arc(px, py, Math.max(0.1, r), 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.shadowBlur = activeAnimation ? 12 : 4;
+                    ctx.shadowColor = this.color;
+                    ctx.fill();
+                }
+            }
+        }
+
+        // Initialize particles
+        for (let i = 0; i < numParticles; i++) {
+            particles.push(new Particle());
+        }
+
+        // Animation Loop
+        function animate() {
+            // Create a slight motion blur effect by drawing transparent background
+            ctx.fillStyle = 'rgba(11, 2, 20, 0.2)';
+            ctx.fillRect(0, 0, width, height);
+
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        // Trigger transition on Click
+        card.addEventListener('click', () => {
+            activeAnimation = true;
+            card.style.opacity = '0';
+            card.style.transform = 'scale(0.8)';
+            setTimeout(() => {
+                card.style.display = 'none';
+            }, 1000);
+        });
+
+        animate();
+    </script>
+</body>
+</html>s

@@ -1,0 +1,159 @@
+ <!DOCTYPE html>
+<html lang="en">
+ <head>
+    <title>Text Input Control</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+ <body> 
+    <div class="container">
+     <student-form class="student-form">
+
+    First Name: <input
+    type="text"
+    name="first_Name"
+    id="first_Name"
+    placeholder="Enter your first name" 
+    value=""
+    size="30"
+    maxlength="50"
+    required
+    autofocus
+    >
+
+    Last Name: <input
+    type="text"
+    name="last_Name"
+    id="last_Name"
+    placeholder="Enter your last name"
+    value=""
+    size="30"
+    maxlength="50"
+    required
+    > 
+    
+
+    Phone Number:<input
+    type="tel"
+    name="phone_Number"
+    id="phone_Number"
+    placeholder="Enter your phone number"
+    value=""
+    size="30"
+    maxlength="15"
+    required
+    > 
+    
+    Email :<input
+    type="email"
+    name="email"
+    id="email"
+    placeholder="Enter your email"
+    value=""
+    size="30"
+    maxlength="15"
+    required
+   > 
+    
+    
+    Password :<input
+    type="password"
+    name="password"
+    id="password"
+    placeholder="Enter your password"
+    value=""
+    size="30"
+    maxlength="15"
+    required
+    > 
+     
+    
+    information :
+     <textarea
+
+    name="information"
+    id="information"
+    placeholder="Enter your information"
+    value=""
+    required
+    ></textarea>
+    
+
+    <!--<Legend><h2> Checkbox Control</h2></legend>-->
+    <input type="checkbox" id="html"
+        name="skills" value="HTML">
+     <label for="html"> HTML</label>
+
+    <input type="checkbox" id="css"
+        name="skills" value="CSS"> 
+    <label for="css"> CSS</label>
+
+    <input type="checkbox" id="js"
+        name="skills" value="JavaScript" checked> 
+    <label for="js"> JavaScript</label>
+        
+    <input type="checkbox" id="php"
+        name="skills" value="PHP"> 
+    <label for="php"> PHP</label>
+   
+Select Gender:
+
+
+    <input type ="radio" id="male" name="gender"
+            value="Male">
+    <label for="male"> Male</label>
+
+    <input type ="radio" id="female" name="gender"
+            value="Female">
+    <label for="female"> Female</label>
+
+    <input type ="radio" id="Other" name="gender"
+            value="Other">
+    <label for="Other"> Other</label>
+    
+   
+
+    <label for="country">Select Country:</label>
+    <select name="country" id="country">
+
+        <option value=""> --Choose Country--</option>
+
+        <option value="canada">Canada</option>
+
+        <option value="colombia">Colombia</option>
+
+        <option value="uganda">Uganda</option>
+        
+        <option value="Venezuela">Venezuela</option>
+
+        <option value="France">France</option>
+
+        <option value="Morroco">Morroco</option>
+
+        <option value="Portugal">Portugal</option>
+
+        <option value="Tunisia">Tunisia</option>
+
+        <option value="Greece">Greece</option>
+
+        <option value="Ghana">Ghana</option>
+
+    </select>
+
+    <label for="myfile">Upload File:</label>
+    <input
+     type="file" 
+     id="myfile"
+     name="myfile"              
+     Accept=".jpg, .png, .pdf .csv">
+    
+
+     <button type="submit" class="btn" >
+     Submit</button>
+    <button type="reset" class="btn" >
+     Reset</button>
+
+    </form>
+
+</body>
+</html>
